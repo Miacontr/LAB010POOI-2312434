@@ -1,0 +1,107 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+class Paciente {
+    private String nombre;
+    private int edad;
+
+    public Paciente(String nombre, int edad) {
+        this.nombre = nombre;
+        this.edad = edad;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre + ", edad: " + edad;
+    }
+}
+
+class Medico {
+    private String nombre;
+    private String especialidad;
+
+    public Medico(String nombre, String especialidad) {
+        this.nombre = nombre;
+        this.especialidad = especialidad;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getEspecialidad() {
+        return especialidad;
+    }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre + ", especialidad: " + especialidad;
+    }
+}
+
+class SistemaGestionPacientes {
+    private Map<Medico, List<Paciente>> pacientesPorMedico;
+
+    public SistemaGestionPacientes() {
+        pacientesPorMedico = new HashMap<>();
+    }
+
+    public void asignarPaciente(Medico medico, Paciente paciente) {
+        if (pacientesPorMedico.containsKey(medico)) {
+            pacientesPorMedico.get(medico).add(paciente);
+        } else {
+            List<Paciente> pacientes = new ArrayList<>();
+            pacientes.add(paciente);
+            pacientesPorMedico.put(medico, pacientes);
+        }
+    }
+
+    public List<Paciente> getPacientesPorMedico(Medico medico) {
+        return pacientesPorMedico.getOrDefault(medico, new ArrayList<>());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SistemaGestionPacientes sistema = new SistemaGestionPacientes();
+
+        Medico medico1 = new Medico("Dr. Juan Perez", "Cardiología");
+        Medico medico2 = new Medico("Dra. Maria Gomez", "Pediatría");
+
+        Paciente paciente1 = new Paciente("Carlos", 35);
+        Paciente paciente2 = new Paciente("Ana", 28);
+        Paciente paciente3 = new Paciente("Luis", 42);
+        Paciente paciente4 = new Paciente("Sophia", 5);
+
+        sistema.asignarPaciente(medico1, paciente1);
+        sistema.asignarPaciente(medico1, paciente2);
+        sistema.asignarPaciente(medico2, paciente3);
+        sistema.asignarPaciente(medico2, paciente4);
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese el nombre del médico: ");
+        String nombreMedico = scanner.nextLine();
+
+        List<Paciente> pacientesDelMedico = sistema.getPacientesPorMedico(new Medico(nombreMedico, ""));
+
+        if (pacientesDelMedico.isEmpty()) {
+            System.out.println("No se encontraron pacientes para el médico especificado.");
+        } else {
+            System.out.println("Pacientes del médico " + nombreMedico + ":");
+            for (Paciente paciente : pacientesDelMedico) {
+                System.out.println(paciente);
+            }
+        }
+    }
+}
